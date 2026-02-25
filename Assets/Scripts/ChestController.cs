@@ -9,7 +9,7 @@ using UnityEditor.SceneManagement;
 public class ChestController : MonoBehaviour
 {
     // Start is called before the first frame update
-    [SerializeField ] GameObject textContainer;
+    [SerializeField] GameObject textContainer;
     [SerializeField] GameObject keyContainer;
     [SerializeField] GameObject boxContainer;
     [SerializeField] GameObject[] chestStages;
@@ -32,14 +32,14 @@ public class ChestController : MonoBehaviour
 
     private void InitializeButtons()
     {
-        for(int i = 65; i<=90;i++)
+        for (int i = 65; i <= 90; i++)
         {
             CreateButton(i);
         }
         endPanel.SetActive(false);
         chestProgress = 0;
     }
-    
+
     private void Continue()
 
     {
@@ -49,65 +49,70 @@ public class ChestController : MonoBehaviour
 
     private void DisableAllButton()
     {
-        foreach(Button btn in keyContainer.GetComponentsInChildren<Button>())
+        foreach (Button btn in keyContainer.GetComponentsInChildren<Button>())
         {
             btn.interactable = false;
         }
-            
+
     }
 
     private void InitializeGame()
     {
         //reset to origin state
         incorrectGuesses = 0;
-        correctGuesses =0;
+        correctGuesses = 0;
         endPanel.SetActive(false);
         continueButton.gameObject.SetActive(false);
-        foreach(Button child in keyContainer.GetComponentsInChildren<Button>())
+        foreach (Button child in keyContainer.GetComponentsInChildren<Button>())
         {
             child.interactable = true;
         }
-        foreach(Transform child in textContainer.GetComponentInChildren<Transform>())
+        foreach (Transform child in textContainer.GetComponentInChildren<Transform>())
         {
             Destroy(child.gameObject);
         }
-        foreach(GameObject stage in chestStages)
+        foreach (GameObject stage in chestStages)
         {
             stage.SetActive(false);
         }
 
-        
+
         //generate new word
         word = generateWord().ToUpper();
-        foreach(char letter in word)
+        foreach (char letter in word)
         {
-            var temp =Instantiate(boxContainer, textContainer.transform);
+            var temp = Instantiate(boxContainer, textContainer.transform);
         }
 
         gameOver = false;
+        chestProgress = 0;
+        if (chestStages.Length > 0)
+        {
+            chestStages[0].SetActive(true);
+        }
 
     }
 
     private void CreateButton(int i)
     {
-        GameObject temp = Instantiate(letterButton,keyContainer.transform);
-        temp.GetComponentInChildren<TextMeshProUGUI>().text=((char)i).ToString();
-        temp.GetComponent<Button>().onClick.AddListener(delegate{CheckLetter(((char)i).ToString());});
+        GameObject temp = Instantiate(letterButton, keyContainer.transform);
+        temp.GetComponentInChildren<TextMeshProUGUI>().text = ((char)i).ToString();
+        temp.GetComponent<Button>().onClick.AddListener(delegate { CheckLetter(((char)i).ToString()); });
     }
 
     private string generateWord()
     {
         string[] wordList = possibleWord.text.Split("\n");
-        string line = wordList[Random.Range(0, wordList.Length-1)];
-        return line.Substring(0, line.Length-1);
+        string line = wordList[Random.Range(0, wordList.Length - 1)];
+        return line.Substring(0, line.Length - 1);
     }
 
 
     // correct/inco letter logic
     private void CheckLetter(string inputLetter)
     {
-        
-        if(gameOver) return; //stop if the game ends
+
+        if (gameOver) return; //stop if the game ends
 
         foreach (Button btn in keyContainer.GetComponentsInChildren<Button>())
         {
@@ -115,13 +120,13 @@ public class ChestController : MonoBehaviour
             {
                 btn.interactable = false;
                 break;
-            }        
+            }
         }
-           
+
         bool letterInWord = false;
-        for(int i=0;i<word.Length;i++)
+        for (int i = 0; i < word.Length; i++)
         {
-            if(inputLetter == word[i].ToString()) 
+            if (inputLetter == word[i].ToString())
             {
                 textContainer.GetComponentsInChildren<TextMeshProUGUI>()[i].text = inputLetter;
                 //correctGuesses++;
@@ -129,30 +134,31 @@ public class ChestController : MonoBehaviour
             }
         }
 
-        if(letterInWord)
+        if (letterInWord)
         {
             chestProgress++;
 
-            int stageIndex = Mathf.Clamp(chestProgress -1, 0, chestStages.Length -1);
-            //visibility of each stage
-            foreach(GameObject stage in chestStages)
+            int stageIndex = Mathf.Clamp(chestProgress, 0, chestStages.Length - 1);
+
+            foreach (GameObject stage in chestStages)
             {
                 stage.SetActive(false);
             }
-            
+
+
             chestStages[stageIndex].SetActive(true);
             correctGuesses++;
         }
-            else
-            {
-                incorrectGuesses++;
-            }
+        else
+        {
+            incorrectGuesses++;
+        }
         CheckOutCome();
     }
-    
+
     private void CheckOutCome()
     {
-        if(correctGuesses == word.Length)
+        if (correctGuesses == word.Length)
         {
             gameOver = true;
             DisableAllButton();
@@ -160,7 +166,7 @@ public class ChestController : MonoBehaviour
             continueButton.gameObject.SetActive(true); //show btn
 
 
-            for(int i=0;i<word.Length;i++)
+            for (int i = 0; i < word.Length; i++)
             {
                 textContainer.GetComponentsInChildren<TextMeshProUGUI>()[i].color = Color.red;
             }
@@ -168,9 +174,9 @@ public class ChestController : MonoBehaviour
             return;
         } //indicates that u won
 
-        if(incorrectGuesses == chestStages.Length)
+        if (incorrectGuesses == chestStages.Length)
         {
-            for(int i=0;i<word.Length;i++)
+            for (int i = 0; i < word.Length; i++)
             {
                 textContainer.GetComponentsInChildren<TextMeshProUGUI>()[i].color = Color.red;
                 textContainer.GetComponentsInChildren<TextMeshProUGUI>()[i].text = word[i].ToString();

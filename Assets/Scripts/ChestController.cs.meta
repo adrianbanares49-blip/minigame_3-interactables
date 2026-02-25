@@ -3,7 +3,14 @@ guid: a470a21696d24ad4d964eabc5c622951
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - textContainer: {instanceID: 0}
+  - keyContainer: {instanceID: 0}
+  - boxContainer: {instanceID: 0}
+  - letterButton: {instanceID: 0}
+  - possibleWord: {instanceID: 0}
+  - endPanel: {instanceID: 0}
+  - continueButton: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
